@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
  @Update suspend fun updateTask(value:TaskEntity)
  @Query("DELETE FROM tasks WHERE id=:id") suspend fun deleteTask(id:Long)
  @Query("SELECT * FROM completions WHERE profileId=:profileId") fun completions(profileId:Long):Flow<List<TaskCompletionEntity>>
+ @Query("SELECT * FROM point_transactions WHERE profileId=:profileId ORDER BY createdAt DESC") fun transactions(profileId:Long):Flow<List<PointsTransactionEntity>>
  @Query("SELECT * FROM completions WHERE taskId=:taskId AND date=:date LIMIT 1") suspend fun completion(taskId:Long,date:String):TaskCompletionEntity?
  @Insert(onConflict=OnConflictStrategy.IGNORE) suspend fun insertCompletion(value:TaskCompletionEntity):Long
  @Query("DELETE FROM completions WHERE id=:id") suspend fun deleteCompletion(id:Long)
@@ -18,12 +19,22 @@ import kotlinx.coroutines.flow.Flow
  @Query("SELECT COALESCE(SUM(amount),0) FROM point_transactions WHERE profileId=:profileId") fun points(profileId:Long):Flow<Int>
  @Query("SELECT * FROM goals WHERE profileId=:profileId ORDER BY status,id DESC") fun goals(profileId:Long):Flow<List<GoalEntity>>
  @Insert suspend fun insertGoal(value:GoalEntity):Long
+ @Update suspend fun updateGoal(value:GoalEntity)
  @Query("SELECT * FROM rewards WHERE profileId=:profileId ORDER BY claimed,unlocked DESC") fun rewards(profileId:Long):Flow<List<RewardEntity>>
  @Insert suspend fun insertReward(value:RewardEntity):Long
+ @Update suspend fun updateReward(value:RewardEntity)
+ @Insert suspend fun insertRedemption(value:RewardRedemptionEntity):Long
  @Query("SELECT * FROM point_transactions ORDER BY createdAt") suspend fun allTransactions():List<PointsTransactionEntity>
  @Transaction suspend fun complete(task:TaskEntity,date:String,quantity:Int) { val id=insertCompletion(TaskCompletionEntity(taskId=task.id,profileId=task.profileId,date=date,quantity=quantity)); if(id>0 && quantity>=task.targetQuantity) insertTransaction(PointsTransactionEntity(profileId=task.profileId,amount=task.points,type=TransactionType.TASK,sourceType="completion",sourceId=id.toString(),note=task.name)) }
  @Transaction suspend fun undo(taskId:Long,date:String) { completion(taskId,date)?.let { deleteCompletion(it.id); insertTransaction(PointsTransactionEntity(profileId=it.profileId,amount=-transactionAmount(it.id),type=TransactionType.REVERSAL,sourceType="reversal",sourceId=it.id.toString(),note="Cumplimiento deshecho")) } }
  @Query("SELECT COALESCE(amount,0) FROM point_transactions WHERE sourceType='completion' AND sourceId=:id LIMIT 1") suspend fun transactionAmount(id:Long):Int
+ @Transaction suspend fun redeem(reward:RewardEntity, points:Int): Boolean {
+  if (!reward.redeemable || points < reward.requiredPoints || (!reward.repeatable && reward.claimed)) return false
+  val id=insertRedemption(RewardRedemptionEntity(rewardId=reward.id,profileId=reward.profileId,pointsSpent=reward.requiredPoints,confirmedAt=System.currentTimeMillis()))
+  insertTransaction(PointsTransactionEntity(profileId=reward.profileId,amount=-reward.requiredPoints,type=TransactionType.REDEMPTION,sourceType="redemption",sourceId=id.toString(),note=reward.name))
+  updateReward(reward.copy(unlocked=true,claimed=true,unlockedAt=reward.unlockedAt?:System.currentTimeMillis(),claimedAt=System.currentTimeMillis()))
+  return true
+ }
 }
 
 @Database(entities=[ChildProfileEntity::class,TaskEntity::class,TaskCompletionEntity::class,PointsTransactionEntity::class,GoalEntity::class,GoalTaskRelationEntity::class,RewardEntity::class,RewardRedemptionEntity::class,AchievementEntity::class],version=2,exportSchema=true)

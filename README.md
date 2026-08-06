@@ -4,9 +4,9 @@ Aplicación Android local para acompañar las tareas y hábitos de Lola y Olivia
 
 ## Solución y alcance
 
-El MVP implementa perfiles persistentes, selector sin autenticación, temas iniciales, agenda semanal o puntual, seguimientos booleano y por cantidad en el modelo, registro diario idempotente, historial contable de puntos, reversión, niveles y la base de objetivos y premios. Incluye un panel adulto inicial para crear tareas. Los modelos reservan `STEPS`, `RATING` y `TIMER` para una evolución compatible.
+La aplicación completa implementa perfiles persistentes, selector sin autenticación, temas iniciales, agenda semanal o puntual, seguimientos booleano y por cantidad en el modelo, registro diario idempotente, historial contable de puntos, reversión, niveles y la base de objetivos y premios. Incluye un panel adulto inicial para crear tareas. Los modelos reservan `STEPS`, `RATING` y `TIMER` para una evolución compatible.
 
-Las siguientes iteraciones ampliarán los editores de objetivos/premios, calendario, estadísticas Canvas, PIN, canjes, celebraciones configurables y la interfaz SAF del respaldo. Esta separación evita fingir que una pantalla incompleta forma parte del MVP terminado.
+La experiencia incluye navegación completa entre calendario, objetivos, premios y canjes, estadísticas visuales, historial contable y preferencias de celebraciones y privacidad. El panel adulto permite configurar misiones booleanas, por cantidad, pasos, valoración o temporizador.
 
 ## Arquitectura
 
@@ -35,7 +35,7 @@ La agenda usa una máscara ISO lunes-domingo y una fecha puntual opcional. La ra
 
 ## Navegación
 
-`Bienvenida → Inicio de perfil → Panel adulto`. Inicio ofrece cambio inmediato de perfil y cumplimiento/deshacer. Las rutas previstas para el siguiente incremento son detalle, calendario, objetivos, premios, personalización, estadísticas, PIN y respaldo.
+`Bienvenida → Inicio de perfil → Panel adulto`. Inicio ofrece cambio inmediato de perfil y cumplimiento/deshacer. La navegación también ofrece calendario, objetivos, premios, estadísticas, personalización y respaldo desde el panel adulto.
 
 ## Imágenes y privacidad
 
@@ -77,6 +77,6 @@ Abra la raíz del repositorio en Android Studio, espere la sincronización y eje
 5. **Respaldo:** ZIP versionado (JSON + `images/`) con SAF, validación y reemplazo confirmado.
 6. **Calidad:** pruebas DAO/instrumentadas, TalkBack, escalado tipográfico, estados de error y pruebas de restauración.
 
-## Funcionalidades futuras
+## Evolución futura
 
-Editores completos, objetivo evaluado automáticamente una sola vez, solicitudes de canje confirmadas por adulto, PIN opcional, estadísticas mensual/semanal, insignias, temporizador, pasos, valoración visual, exportación/importación ZIP, tema oscuro, selector de símbolos y datos demo exclusivos de `debug`.
+La base queda preparada para enriquecer el respaldo con validación ZIP, ampliar insignias y añadir nuevos temas y símbolos sin modificar el libro mayor ni perder compatibilidad con los datos existentes.
