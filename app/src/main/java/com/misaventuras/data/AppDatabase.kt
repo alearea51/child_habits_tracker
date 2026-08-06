@@ -26,5 +26,5 @@ import kotlinx.coroutines.flow.Flow
  @Query("SELECT COALESCE(amount,0) FROM point_transactions WHERE sourceType='completion' AND sourceId=:id LIMIT 1") suspend fun transactionAmount(id:Long):Int
 }
 
-@Database(entities=[ChildProfileEntity::class,TaskEntity::class,TaskCompletionEntity::class,PointsTransactionEntity::class,GoalEntity::class,GoalTaskRelationEntity::class,RewardEntity::class,RewardRedemptionEntity::class,AchievementEntity::class],version=1,exportSchema=true)
+@Database(entities=[ChildProfileEntity::class,TaskEntity::class,TaskCompletionEntity::class,PointsTransactionEntity::class,GoalEntity::class,GoalTaskRelationEntity::class,RewardEntity::class,RewardRedemptionEntity::class,AchievementEntity::class],version=2,exportSchema=true)
 @TypeConverters(Converters::class) abstract class AppDatabase:RoomDatabase(){ abstract fun dao():AdventureDao }
