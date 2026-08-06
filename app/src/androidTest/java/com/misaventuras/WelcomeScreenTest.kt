@@ -2,8 +2,8 @@ package com.misaventuras
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import com.misaventuras.data.ChildProfileEntity
 import com.misaventuras.ui.HomeState
 import com.misaventuras.ui.WelcomeScreen
@@ -22,5 +22,11 @@ class AppLaunchTest {
         compose.onNodeWithText("Mis Aventuras").assertIsDisplayed()
         compose.onNodeWithText("Lola").assertIsDisplayed()
         compose.onNodeWithText("Olivia").assertIsDisplayed()
+    }
+
+    @Test
+    fun selectingProfileAppliesItsThemeAndOpensHome() {
+        compose.onNodeWithText("Lola").performClick()
+        compose.onNodeWithText("¡Hola, Lola! 👋").assertIsDisplayed()
     }
 }
