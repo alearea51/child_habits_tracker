@@ -45,9 +45,11 @@ La aplicación no declara permiso de Internet, ubicación, contactos ni almacena
 
 ## Compilar
 
-Requisitos: Android Studio Ladybug o posterior, JDK 17/21, Android SDK 35 y Gradle 8.9 o posterior.
+Requisitos: Android Studio Ladybug o posterior, JDK 17, Android SDK 35 y **Gradle 8.9**. AGP 8.7.3 no debe ejecutarse con Gradle 9.x.
 
-> **Nota sobre el wrapper:** este repositorio no incluye `gradle-wrapper.jar` porque algunos revisores de pull requests rechazan archivos binarios. `gradlew` es un lanzador de texto que delega en Gradle instalado. En Android Studio seleccione **Settings → Build Tools → Gradle → Gradle distribution: Local installation** (o use el Gradle incluido por el IDE). Para regenerar el wrapper estándar localmente: `gradle wrapper --gradle-version 8.9`; no es necesario subir el JAR generado.
+> **Nota sobre el wrapper:** este repositorio no incluye `gradle-wrapper.jar` porque algunos revisores de pull requests rechazan archivos binarios. `gradlew` es un lanzador de texto que delega en Gradle instalado. En Android Studio seleccione **Settings → Build Tools → Gradle → Gradle distribution: Local installation**, elija **Gradle 8.9** y configure **Gradle JDK: 17**. Para regenerar el wrapper estándar localmente: `gradle wrapper --gradle-version 8.9`; no es necesario subir el JAR generado.
+
+El módulo fija explícitamente Java, Kotlin y KSP a JVM 17. Esto evita el error `Inconsistent JVM-target compatibility` aunque Android Studio se esté ejecutando con JDK 21. Después de cambiar la configuración, use **Sync Project with Gradle Files** y luego **Build → Clean Project**.
 
 ```bash
 ./gradlew test
