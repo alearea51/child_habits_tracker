@@ -1,5 +1,6 @@
 package com.misaventuras.ui
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.misaventuras.data.*
@@ -29,6 +30,7 @@ private data class ExtraState(val goals:List<GoalEntity>,val rewards:List<Reward
 class MainViewModel @Inject constructor(
     private val repository: AdventureRepository,
     private val settings: SettingsStore,
+    private val imageStore: ImageStore,
 ) : ViewModel() {
     private val selectedId = MutableStateFlow<Long?>(null)
     private fun <T> selectedFlow(empty: T, block: (Long) -> Flow<T>) =
@@ -54,7 +56,14 @@ class MainViewModel @Inject constructor(
     }
     fun select(id: Long) { selectedId.value = id; viewModelScope.launch { settings.select(id) } }
     fun toggle(item: TodayTask) = viewModelScope.launch { repository.toggle(item) }
-    fun addTask(name: String, points: Int, type: TrackingType, target: Int, days: Int) = state.value.selected?.let { p -> viewModelScope.launch { repository.addTask(TaskEntity(profileId=p.id,name=name.trim(),points=points,trackingType=type,targetQuantity=target,daysMask=days)) } }
+    fun addTask(name: String, points: Int, type: TrackingType, target: Int, days: Int, icon: String = "star", customIcon: Uri? = null) = state.value.selected?.let { p -> viewModelScope.launch {
+        val storedIcon = customIcon?.let { runCatching { imageStore.copyOptimized(it, "task_${p.id}") }.getOrNull() } ?: icon
+        repository.addTask(TaskEntity(profileId=p.id,name=name.trim(),points=points,trackingType=type,targetQuantity=target,daysMask=days,icon=storedIcon))
+    } }
+    fun updateProfile(name: String, primaryColor: Long, avatar: Uri?) = state.value.selected?.let { profile -> viewModelScope.launch {
+        val storedAvatar = avatar?.let { runCatching { imageStore.copyOptimized(it, "avatar_${profile.id}") }.getOrNull() } ?: profile.avatarPath
+        repository.saveProfile(profile.copy(name=name.trim().ifEmpty { profile.name },primaryColor=primaryColor,avatarPath=storedAvatar))
+    } }
     fun addGoal(name: String, required: Int, bonus: Int) = state.value.selected?.let { p -> viewModelScope.launch { repository.addGoal(GoalEntity(profileId=p.id,name=name.trim(),type=GoalType.POINTS,requiredValue=required,startDate=LocalDate.now().toString(),bonusPoints=bonus)) } }
     fun addReward(name: String, required: Int) = state.value.selected?.let { p -> viewModelScope.launch { repository.addReward(RewardEntity(profileId=p.id,name=name.trim(),requiredPoints=required,redeemable=true)) } }
     fun redeem(reward: RewardEntity) = viewModelScope.launch { repository.redeem(reward, state.value.points) }
