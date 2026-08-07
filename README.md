@@ -4,7 +4,7 @@ Aplicación Android local para acompañar las tareas y hábitos de Lola y Olivia
 
 ## Solución y alcance
 
-La aplicación completa implementa perfiles persistentes, selector sin autenticación, temas iniciales, agenda semanal o puntual, seguimientos booleano y por cantidad en el modelo, registro diario idempotente, historial contable de puntos, reversión, niveles y la base de objetivos y premios. Incluye un panel adulto inicial para crear tareas. Los modelos reservan `STEPS`, `RATING` y `TIMER` para una evolución compatible.
+La aplicación completa implementa perfiles persistentes y personalizables (nombre, color y foto local), selector sin autenticación, temas iniciales, agenda semanal o puntual, seguimientos booleano y por cantidad en el modelo, registro diario idempotente, historial contable de puntos, reversión, niveles y la base de objetivos y premios. El panel adulto permite crear tareas con un símbolo incluido o una imagen propia como icono. Los modelos reservan `STEPS`, `RATING` y `TIMER` para una evolución compatible.
 
 La experiencia incluye navegación completa entre calendario, objetivos, premios y canjes, estadísticas visuales, historial contable y preferencias de celebraciones y privacidad. El panel adulto permite configurar misiones booleanas, por cantidad, pasos, valoración o temporizador.
 
@@ -39,7 +39,7 @@ La agenda usa una máscara ISO lunes-domingo y una fecha puntual opcional. La ra
 
 ## Imágenes y privacidad
 
-`ImageStore` copia la imagen seleccionada a almacenamiento interno, limita su lado mayor a 1024 px y la comprime como WebP. La integración visual debe invocarlo desde el Photo Picker oficial (`PickVisualMedia`); no se solicita permiso general de archivos.
+`ImageStore` copia las fotos de perfil y los iconos de misión seleccionados a almacenamiento interno, limita su lado mayor a 1024 px y los comprime como WebP. La interfaz lo invoca desde el Photo Picker oficial (`PickVisualMedia`); no se solicita permiso general de archivos.
 
 La aplicación no declara permiso de Internet, ubicación, contactos ni almacenamiento. No integra anuncios, analytics, trackers, cuentas, backend, claves, compras ni funciones sociales. Ningún dato o imagen abandona el dispositivo. Android Backup está desactivado para reforzar el comportamiento estrictamente local.
 

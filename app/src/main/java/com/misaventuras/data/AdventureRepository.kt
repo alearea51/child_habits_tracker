@@ -12,6 +12,7 @@ data class TodayTask(val task:TaskEntity,val completion:TaskCompletionEntity?)
  fun today(profileId:Long,date:LocalDate=LocalDate.now()):Flow<List<TodayTask>> = combine(dao.tasks(profileId),dao.completions(profileId)){tasks,done -> tasks.filter{GameLogic.isScheduled(it.daysMask,it.oneOffDate,date)}.map{ t->TodayTask(t,done.firstOrNull{it.taskId==t.id&&it.date==date.toString()})}}
  suspend fun toggle(item:TodayTask,date:LocalDate=LocalDate.now()) { if(item.completion==null) dao.complete(item.task,date.toString(),item.task.targetQuantity) else dao.undo(item.task.id,date.toString()) }
  suspend fun addTask(task:TaskEntity)=dao.insertTask(task)
+ suspend fun saveProfile(profile:ChildProfileEntity)=dao.saveProfile(profile)
  suspend fun addGoal(goal:GoalEntity)=dao.insertGoal(goal)
  suspend fun addReward(reward:RewardEntity)=dao.insertReward(reward)
  suspend fun redeem(reward:RewardEntity,points:Int)=dao.redeem(reward,points)
